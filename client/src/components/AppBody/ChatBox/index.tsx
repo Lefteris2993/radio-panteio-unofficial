@@ -1,22 +1,16 @@
 import { Send } from '@mui/icons-material';
 import {
   Box,
-  Button, IconButton, Paper, Stack, TextField, Typography,
+  IconButton, Paper, Stack, TextField, useMediaQuery,
 } from '@mui/material';
 import { SocketContext } from 'context/socket';
 import React from 'react';
 import { Message } from 'utils/interfaces';
+import ChatHeader from './ChatHeader';
 import MessageBox from './MessageBox';
 
-const validNameRegex = /^([a-z]*[1-9]*[A-Z]*\.*\@*\-*\_*)+$/;
-
-const validateName = (name: string | undefined) => {
-  if (name === undefined || name === '') return false;
-  return validNameRegex.test(name);
-};
-
 function ChatBox() {
-  const [username, setUsername] = React.useState<string>('');
+  const matches = useMediaQuery('(max-width:780px)');
   const [newMessage, setNewMessage] = React.useState<string>('');
   const [messages, setMessages] = React.useState<Message[]>([]);
   const messageScrollBoxRef = React.useRef<HTMLDivElement>(null);
@@ -51,29 +45,8 @@ function ChatBox() {
     }
   }, [messages]);
 
-  const handleUsername = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setUsername(event.target.value.trim());
-    socket.setUserName(event.target.value.trim());
-  };
-
   const handleMessage = (event: React.ChangeEvent<HTMLInputElement>) => {
     setNewMessage(event.target.value);
-  };
-
-  const erroredName = () => (username?.length || 0) > 0 && !validateName(username);
-
-  const handleJoin = () => {
-    if (erroredName()) {
-      return;
-    }
-    socket.connect();
-  };
-
-  const handleLeave = () => {
-    if (!socket.connected) {
-      return;
-    }
-    socket.disconnect();
   };
 
   const handleSentMessage = () => {
@@ -85,49 +58,21 @@ function ChatBox() {
     <Paper
       variant="outlined"
       sx={{
-        margin: '2rem',
         padding: '1rem',
-        maxWidth: '80%',
-        // eslint-disable-next-line no-useless-computed-key
-        ['@media (max-width:780px)']: {
-          maxWidth: 'none',
-          width: '85vw',
-        },
+        width: matches ? '85vw' : '70%',
       }}
     >
-      <Paper
-        variant="outlined"
+      { matches && (
+      <Box
         sx={{
           margin: '0.1rem',
           padding: '1rem',
+
         }}
       >
-        <Stack spacing={2} direction="row" alignItems="center" justifyContent="space-around">
-          { socket.connected ? (
-            <Box>
-              <Typography variant="h6">
-                Connected as:
-              </Typography>
-              <Typography variant="h5">{socket.userName}</Typography>
-            </Box>
-          ) : (
-            <TextField
-              id="outlined-basic"
-              label="Username"
-              variant="outlined"
-              type="text"
-              value={username}
-              onChange={handleUsername}
-              error={erroredName()}
-              helperText={erroredName() && 'Use only alphanumeric characters and . @ - _'}
-            />
-
-          ) }
-          { socket.connected
-            ? <Button variant="contained" onClick={handleLeave} color="secondary">Leave Chat</Button>
-            : <Button variant="contained" onClick={handleJoin} type="submit">Join Chat!</Button> }
-        </Stack>
-      </Paper>
+        <ChatHeader />
+      </Box>
+      ) }
       { socket.connected && (
       <Paper
         ref={messageScrollBoxRef}
@@ -135,7 +80,9 @@ function ChatBox() {
         sx={{
           margin: '0.1rem',
           padding: '1rem',
-          height: '20rem',
+          height: matches ? '20rem' : '40vh',
+          minHeight: '20rem',
+          maxHeight: '90%',
           overflowY: 'auto',
           overflowX: 'hidden',
         }}
@@ -146,28 +93,29 @@ function ChatBox() {
       </Paper>
       )}
       { socket.connected && (
-      <Paper
-        variant="outlined"
+      <Box
         sx={{
           margin: '0.1rem',
           padding: '1rem',
         }}
       >
-        <Stack spacing={1} direction="row" justifyContent="space-between">
-          <TextField
-            id="outlined-multiline-flexible"
-            label="Sent Message"
-            multiline
-            fullWidth
-            value={newMessage}
-            onChange={handleMessage}
-            maxRows={4}
-          />
-          <IconButton onClick={handleSentMessage}>
-            <Send color="primary" fontSize="large" />
-          </IconButton>
-        </Stack>
-      </Paper>
+        <form onSubmit={(e) => e.preventDefault()}>
+          <Stack spacing={1} direction="row" justifyContent="space-between">
+            <TextField
+              id="outlined-multiline-flexible"
+              label="Sent Message"
+              fullWidth
+              value={newMessage}
+              onChange={handleMessage}
+              maxRows={4}
+            />
+            <IconButton onClick={handleSentMessage} type="submit">
+              <Send color="primary" fontSize="large" />
+            </IconButton>
+          </Stack>
+        </form>
+
+      </Box>
       )}
     </Paper>
   );

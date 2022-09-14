@@ -2,7 +2,7 @@ import {
   Pause, PlayArrow, VolumeOff, VolumeUp,
 } from '@mui/icons-material';
 import {
-  Button, Paper, Slider, Stack, IconButton,
+  Paper, Slider, Stack, IconButton, useMediaQuery,
 } from '@mui/material';
 import { LocalSettingsContext } from 'context/localSettings';
 import React from 'react';
@@ -13,6 +13,7 @@ let audio: HTMLAudioElement | null = null;
 function AudioPlayer() {
   const { settings, setSettings } = React.useContext(LocalSettingsContext);
   const [playing, setPlaying] = React.useState<boolean>(false);
+  const matches = useMediaQuery('(max-width:780px)');
 
   React.useEffect(() => {
     if (audio !== null) {
@@ -61,30 +62,27 @@ function AudioPlayer() {
       variant="outlined"
       sx={{
         padding: '1rem',
-        // eslint-disable-next-line no-useless-computed-key
-        ['@media (max-width:780px)']: {
-          width: '85vw',
-        },
+        width: matches ? '85vw' : '80%',
+        maxWidth: matches ? 'none' : '20rem',
       }}
     >
       <Stack spacing={2} direction="row" alignItems="center">
-        <Button onClick={togglePlay}>
-          { playing ? (
-            <>
-              <Pause />
-              Pause
-            </>
+        <IconButton onClick={togglePlay}>
+          {playing ? (
+            <Pause fontSize="large" color="primary" />
           ) : (
-            <>
-              <PlayArrow />
-              Play
-            </>
+            <PlayArrow fontSize="large" color="primary" />
           )}
-        </Button>
-        <IconButton onClick={toggleMute}>
-          {settings.volume === 0 ? <VolumeOff color="action" /> : <VolumeUp color="primary" />}
         </IconButton>
-        <Slider aria-label="Volume" value={Math.round(settings.volume * 100)} sx={{ minWidth: '10rem' }} onChange={handleVolume} />
+        <IconButton onClick={toggleMute}>
+          {settings.volume === 0 ? <VolumeOff fontSize="large" color="action" /> : <VolumeUp fontSize="large" color="primary" />}
+        </IconButton>
+        <Slider
+          aria-label="Volume"
+          value={Math.round(settings.volume * 100)}
+          onChange={handleVolume}
+          color={settings.volume === 0 ? 'secondary' : 'primary'}
+        />
       </Stack>
     </Paper>
   );

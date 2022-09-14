@@ -5,12 +5,14 @@ function Footer() {
   return (
     <BottomNavigation
       sx={{
+        backgroundColor: '#fafafa',
         width: '100%',
         position: 'relative',
         left: 0,
         bottom: 0,
         display: 'flex',
         justifyContent: 'space-around',
+        paddingTop: '1rem',
         height: '2rem',
         fontSize: 14,
       }}

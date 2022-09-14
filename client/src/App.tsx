@@ -10,6 +10,16 @@ const theme = createTheme({
   typography: {
     fontFamily: 'Roboto',
   },
+  palette: {
+    primary: {
+      main: '#540808',
+      light: '#820c0c',
+    },
+    secondary: {
+      main: '#dce6ea',
+      contrastText: '#142532',
+    },
+  },
 });
 
 function App() {
