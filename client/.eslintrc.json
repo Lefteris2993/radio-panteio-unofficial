@@ -6,7 +6,8 @@
     "settings": {
       "import/resolver": {
         "node": {
-          "extensions": [".ts", ".tsx"]
+          "extensions": [".ts", ".tsx", "js", "jsx"],
+          "moduleDirectory": ["node_modules", "src/"]
         }
       }
     },
@@ -27,6 +28,7 @@
         "@typescript-eslint"
     ],
     "rules": {
+      "no-useless-escape": "off",
       "react/jsx-filename-extension": [2, { "extensions": [".tsx"] }],
       "no-use-before-define": "off",
       "@typescript-eslint/no-use-before-define": ["error"],
@@ -42,5 +44,8 @@
           "tsx": "never"
         }
      ]
+    },
+    "globals": {
+      "JSX": true
     }
 }

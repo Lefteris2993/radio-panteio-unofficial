@@ -11,3 +11,10 @@ export class Logger {
     console.log(`\x1b[31m[Timestamp]: ${(new Date).toISOString()} `, ...data ,` \x1b[0m`);
   }
 }
+
+const validNameRegex = new RegExp('^([a-z]*[1-9]*[A-Z]*\\.*\\@*\\-*\\_*)+$');
+
+export const validateName = (name: string | undefined) => {
+  if (name === undefined || name === '') return false;
+  else return validNameRegex.test(name);
+}
