@@ -23,7 +23,7 @@ function UsersList() {
         {socket.usersList.length}
         )
       </Typography>
-      <List>
+      <List style={{ overflowY: 'scroll', minHeight: '25rem', height: '16vh' }}>
         {socket.usersList.map(
           (user) => (
             <ListItem key={`${user}_${(Math.random() + 1).toString(36).substring(2)}`}>
